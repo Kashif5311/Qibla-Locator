@@ -1,4 +1,4 @@
-#Wed Aug 26 20:35:06 PKT 2026
+#Wed Aug 26 20:43:52 PKT 2026
 base.0=/Users/kashif/Documents/Personal/Git/Qinla-Locator/app/build/intermediates/dex/debug/mergeExtDexDebug/classes.dex
 base.1=/Users/kashif/Documents/Personal/Git/Qinla-Locator/app/build/intermediates/dex/debug/mergeProjectDexDebug/0/classes.dex
 base.10=/Users/kashif/Documents/Personal/Git/Qinla-Locator/app/build/intermediates/dex/debug/mergeExtDexDebug/classes2.dex

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.qibla.locatorar.data.models.ChatMessage
 import com.qibla.locatorar.data.models.PrayerData
 import com.qibla.locatorar.data.models.PrayerResponse
 import java.time.LocalDate
@@ -25,6 +26,7 @@ object PreferenceHelper {
     private const val KEY_GOLD_PRICE = "GOLD_PRICE"
     private const val KEY_GOLD_UNIT = "GOLD_UNIT"
     private const val KEY_GOLD_CURRENCY = "GOLD_CURRENCY"
+    private const val KEY_SAFE_CHAT_MESSAGES = "SAFE_CHAT_MESSAGES"
 
     fun init(context: Context) {
         prefs = context.applicationContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
@@ -109,4 +111,28 @@ object PreferenceHelper {
 
     fun getGoldCurrency(): String = getString(KEY_GOLD_CURRENCY) ?: "PKR"
     fun setGoldCurrency(value: String) = putString(KEY_GOLD_CURRENCY, value)
+
+    // ---- Safe Chat ----
+
+    fun getSafeChatMessages(): List<ChatMessage> {
+        val json = getString(KEY_SAFE_CHAT_MESSAGES) ?: return emptyList()
+
+        val type = object : TypeToken<List<ChatMessage>>() {}.type
+
+        return try {
+            gson.fromJson<List<ChatMessage>>(json, type) ?: emptyList()
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    fun saveSafeChatMessages(messages: List<ChatMessage>) {
+        putJson(KEY_SAFE_CHAT_MESSAGES, messages)
+    }
+
+    fun clearSafeChatMessages() {
+        prefs.edit()
+            .remove(KEY_SAFE_CHAT_MESSAGES)
+            .apply()
+    }
 }
