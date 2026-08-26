@@ -9,5 +9,16 @@ build/
 # OS
 .DS_Store
 
-# Local properties
-local.properties
+*.iml
+.gradle
+/local.properties
+/build
+/captures
+.externalNativeBuild
+.cxx
+app/release/
+/ar/build/
+**/build/
+**/.idea/
+/devfile.yaml
+*.pem
