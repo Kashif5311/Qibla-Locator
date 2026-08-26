@@ -1,0 +1,9 @@
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <external-files-path name="images" path="images/" />
+    <cache-path name="cache" path="." />
+    <files-path name="files" path="." />
+    <files-path name="pdf_dir" path="pdfDir/" />
+    <external-files-path name="images" path="images/" />
+    <external-files-path name="external" path="." />
+    <external-files-path name="images" path="Pictures/" />
+</paths>
