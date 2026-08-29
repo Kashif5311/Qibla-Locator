@@ -53,6 +53,9 @@ import com.qibla.locatorar.utils.getSavedLocation
 import com.qibla.locatorar.utils.hasLocationPermission
 import kotlinx.coroutines.launch
 
+import androidx.compose.ui.res.stringResource
+import com.qibla.locatorar.R
+
 @Composable
 fun QiblaLocatorScreen() {
     val context = LocalContext.current
@@ -70,15 +73,15 @@ fun QiblaLocatorScreen() {
 
     val delta = AppUtils.normalizeDelta(qiblaBearing - heading)
     val (guidance, icon, iconColor) = when {
-        location == null -> Triple("Waiting for location...", Icons.Default.LocationOn, MaterialTheme.colorScheme.outline)
-        kotlin.math.abs(delta) <= AppConstants.QIBLA_CENTERED_DELTA_THRESHOLD -> Triple("Qibla Found", Icons.Default.CheckCircle, Color(0xFF22C55E))
+        location == null -> Triple(stringResource(R.string.waiting_for_location), Icons.Default.LocationOn, MaterialTheme.colorScheme.outline)
+        kotlin.math.abs(delta) <= AppConstants.QIBLA_CENTERED_DELTA_THRESHOLD -> Triple(stringResource(R.string.qibla_found), Icons.Default.CheckCircle, Color(0xFF22C55E))
         delta > 0 -> {
-            if (delta > 15f) Triple("Turn Right", Icons.AutoMirrored.Filled.ArrowForward, MaterialTheme.colorScheme.primary)
-            else Triple("Turn Slightly Right", Icons.AutoMirrored.Filled.KeyboardArrowRight, MaterialTheme.colorScheme.secondary)
+            if (delta > 15f) Triple(stringResource(R.string.turn_right), Icons.AutoMirrored.Filled.ArrowForward, MaterialTheme.colorScheme.primary)
+            else Triple(stringResource(R.string.turn_slightly_right), Icons.AutoMirrored.Filled.KeyboardArrowRight, MaterialTheme.colorScheme.secondary)
         }
         else -> {
-            if (delta < -15f) Triple("Turn Left", Icons.AutoMirrored.Filled.ArrowBack, MaterialTheme.colorScheme.primary)
-            else Triple("Turn Slightly Left", Icons.AutoMirrored.Filled.KeyboardArrowLeft, MaterialTheme.colorScheme.secondary)
+            if (delta < -15f) Triple(stringResource(R.string.turn_left), Icons.AutoMirrored.Filled.ArrowBack, MaterialTheme.colorScheme.primary)
+            else Triple(stringResource(R.string.turn_slightly_left), Icons.AutoMirrored.Filled.KeyboardArrowLeft, MaterialTheme.colorScheme.secondary)
         }
     }
 
@@ -153,7 +156,7 @@ fun QiblaLocatorScreen() {
                         )
                     }
                 ) {
-                    Text("Grant Location")
+                    Text(stringResource(R.string.grant_location))
                 }
             }
 //            FilledTonalButton(onClick = { scope.launch { location = context.currentLocation() } }) {
@@ -164,7 +167,7 @@ fun QiblaLocatorScreen() {
         Text(
 //            text = location?.let { "Current location: ${it.latitude.formatCoord()}, ${it.longitude.formatCoord()}" }
             text = location?.let { "" }
-                ?: "Location is required to calculate the Qibla direction correctly.",
+                ?: stringResource(R.string.location_required_qibla),
             style = MaterialTheme.typography.bodyMedium,
             color = if (location == null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
         )

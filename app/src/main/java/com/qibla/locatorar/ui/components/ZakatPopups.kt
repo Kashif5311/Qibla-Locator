@@ -32,6 +32,9 @@ import com.qibla.locatorar.utils.ZFUtils
 import kotlinx.coroutines.launch
 import java.util.Locale
 
+import androidx.compose.ui.res.stringResource
+import com.qibla.locatorar.R
+
 @Composable
 fun UnderNisabDialog(
     message: String,
@@ -56,7 +59,7 @@ fun UnderNisabDialog(
                     ) {
                         Icon(
                             Icons.Default.Close,
-                            contentDescription = "Close",
+                            contentDescription = stringResource(R.string.cancel),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -72,7 +75,7 @@ fun UnderNisabDialog(
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Text(
-                    text = "Below Nisab Threshold",
+                    text = stringResource(R.string.below_nisab_threshold),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
@@ -95,7 +98,7 @@ fun UnderNisabDialog(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text("Continue Anyway")
+                    Text(stringResource(R.string.continue_anyway))
                 }
             }
         }
@@ -112,19 +115,22 @@ fun ZakatResultDialog(result: ZakatCalculationModel, onDismiss: () -> Unit) {
 
     Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Surface(
-            modifier = Modifier.fillMaxWidth(0.9f).padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .padding(16.dp),
             shape = RoundedCornerShape(24.dp),
             color = MaterialTheme.colorScheme.surface,
             tonalElevation = 4.dp
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .background(bg)
             ) {
 
                 Box(modifier = Modifier.fillMaxWidth()) {
                     IconButton(onClick = onDismiss, modifier = Modifier.align(Alignment.TopEnd)) {
-                        Icon(Icons.Default.Close, contentDescription = "Close", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Icon(Icons.Default.Close, contentDescription = stringResource(R.string.cancel), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
                 Column(
@@ -140,34 +146,37 @@ fun ZakatResultDialog(result: ZakatCalculationModel, onDismiss: () -> Unit) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Column(
-                        Modifier.padding(horizontal = 24.dp)
+                        Modifier
+                            .padding(horizontal = 24.dp)
                             .padding(vertical = 8.dp)
                     ) {
                         Text(
-                            text = "Zakat Calculation Summary",
+                            text = ZFUtils.getZakatTitle(context, result.zakatTypeEnum),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary,
                             textAlign = TextAlign.Center
                         )
-                        Text(
-                            text = ZFUtils.getZakatTitle(context, result.zakatTypeEnum),
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.secondary,
-                            fontWeight = FontWeight.SemiBold,
-                            textAlign = TextAlign.Center
-                        )
+//                        Text(
+//                            text = ZFUtils.getZakatTitle(context, result.zakatTypeEnum),
+//                            style = MaterialTheme.typography.labelLarge,
+//                            color = MaterialTheme.colorScheme.secondary,
+//                            fontWeight = FontWeight.SemiBold,
+//                            textAlign = TextAlign.Center
+//                        )
 
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        val nisabTitle = if (result.zakatTypeEnum == ZakatTypeEnum.ZakatOnGold) {
-                            "Nisab Threshold"
+                        val nisabTitle = if (result.zakatTypeEnum == ZakatTypeEnum.ZakatOnGold || result.zakatTypeEnum == ZakatTypeEnum.ZakatOnSilver) {
+                            stringResource(R.string.nisab_threshold)
                         } else {
-                            "Nisab Threshold (${PreferenceHelper.getGoldCurrency()})"
+                            stringResource(R.string.nisab_threshold_with_currency, PreferenceHelper.getCurrency())
                         }
 
                         val nisabValue = if (result.zakatTypeEnum == ZakatTypeEnum.ZakatOnGold) {
                             String.format(Locale.US, "%s g", ZFUtils.ZakatBusinessRules.nesabOfGoldInGrams.toString())
+                        } else if (result.zakatTypeEnum == ZakatTypeEnum.ZakatOnSilver) {
+                            String.format(Locale.US, "%s g", ZFUtils.ZakatBusinessRules.nesabOfSilverInGrams.toString())
                         } else {
                             String.format(Locale.US, "%,.2f", result.nesabValue)
                         }
@@ -186,13 +195,16 @@ fun ZakatResultDialog(result: ZakatCalculationModel, onDismiss: () -> Unit) {
                             ZakatTypeEnum.ZakatOnMoney -> {
                                 ZakatOnMoneyDetails(result)
                             }
+                            ZakatTypeEnum.ZakatOnSilver -> {
+                                ZakatOnSilverDetails(result)
+                            }
                             else -> {}
                         }
 
                         Spacer(modifier = Modifier.height(24.dp))
 
                         Text(
-                            text = "Payable Zakat",
+                            text = stringResource(R.string.payable_zakat),
                             style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.fillMaxWidth(),
@@ -200,7 +212,9 @@ fun ZakatResultDialog(result: ZakatCalculationModel, onDismiss: () -> Unit) {
                         )
 
                         Surface(
-                            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp),
                             color = MaterialTheme.colorScheme.tertiaryContainer,
                             shape = RoundedCornerShape(16.dp)
                         ) {
@@ -212,7 +226,7 @@ fun ZakatResultDialog(result: ZakatCalculationModel, onDismiss: () -> Unit) {
                                     color = MaterialTheme.colorScheme.onTertiaryContainer
                                 )
                                 Text(
-                                    text = PreferenceHelper.getGoldCurrency(),
+                                    text = PreferenceHelper.getCurrency(),
                                     style = MaterialTheme.typography.titleMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.7f)
@@ -226,8 +240,8 @@ fun ZakatResultDialog(result: ZakatCalculationModel, onDismiss: () -> Unit) {
                             modifier = Modifier.fillMaxWidth(),
                             verticalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            FooterDetailRow("Date", result.date)
-                            FooterDetailRow("Calendar Used", result.calenderType)
+                            FooterDetailRow(stringResource(R.string.date), result.date)
+                            FooterDetailRow(stringResource(R.string.calendar_used), result.calenderType)
                         }
                     }
                 }
@@ -239,12 +253,14 @@ fun ZakatResultDialog(result: ZakatCalculationModel, onDismiss: () -> Unit) {
                             AppUtils.shareBitmap(context, bitmap)
                         }
                     },
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Share Result")
+                    Text(stringResource(R.string.share_result))
                 }
             }
         }
@@ -261,16 +277,16 @@ fun ZakatOnMoneyDetails(result: ZakatCalculationModel) {
         Column(modifier = Modifier.padding(16.dp)) {
             Spacer(modifier = Modifier.height(8.dp))
             Column(modifier = Modifier.fillMaxWidth()) {
-                Text(text = "Total Cash Amount:", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(text = stringResource(R.string.total_cash_amount_label), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Spacer(modifier = Modifier.height(10.dp))
-                Text(text = String.format(Locale.US, "%,.2f %s", result.totalAmount, PreferenceHelper.getGoldCurrency()), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+                Text(text = String.format(Locale.US, "%,.2f %s", result.totalAmount, PreferenceHelper.getCurrency()), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
             }
             
             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
 
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 val rate = if (PreferenceHelper.getPreferredCalender() == com.qibla.locatorar.utils.AppConstants.CalendarType.HIJRI) "2.5%" else "2.577%"
-                Text(text = "Zakat Rate ($rate)", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(text = stringResource(R.string.zakat_rate_label, rate), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
     }
@@ -285,16 +301,42 @@ fun ZakatOnGoldDetails(result: ZakatCalculationModel) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Spacer(modifier = Modifier.height(8.dp))
-            BreakdownRow("24 Karat Gold", result.weight24KGold)
-            BreakdownRow("22 Karat Gold", result.weight22KGold)
-            BreakdownRow("21 Karat Gold", result.weight21KGold)
-            BreakdownRow("18 Karat Gold", result.weight18KGold)
+            BreakdownRow(stringResource(R.string.gold_24k), result.weight24KGold)
+            BreakdownRow(stringResource(R.string.gold_22k), result.weight22KGold)
+            BreakdownRow(stringResource(R.string.gold_21k), result.weight21KGold)
+            BreakdownRow(stringResource(R.string.gold_18k), result.weight18KGold)
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
 
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text(text = "Total Net Weight", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+                Text(text = stringResource(R.string.total_net_weight_label), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 Text(text = String.format(Locale.US, "%.2f g", result.totalNetWeight), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+            }
+        }
+    }
+}
+
+@Composable
+fun ZakatOnSilverDetails(result: ZakatCalculationModel) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text(text = stringResource(R.string.silver_weight) + ":", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(text = String.format(Locale.US, "%,.2f g", result.weight), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
+            }
+
+            HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp), thickness = 1.dp, color = MaterialTheme.colorScheme.outlineVariant)
+
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text(text = stringResource(R.string.the_total_amount) + ":", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(text = String.format(Locale.US, "%,.2f %s", result.totalAmount, PreferenceHelper.getCurrency()), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold)
             }
         }
     }
@@ -305,7 +347,9 @@ fun ResultDetailBox(title: String, value: String) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Text(text = title, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Surface(
-            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp),
             color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.4f),
             shape = RoundedCornerShape(12.dp)
         ) {
@@ -314,7 +358,9 @@ fun ResultDetailBox(title: String, value: String) {
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSecondaryContainer,
-                modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
                 textAlign = TextAlign.Center
             )
         }
@@ -324,7 +370,9 @@ fun ResultDetailBox(title: String, value: String) {
 @Composable
 fun BreakdownRow(label: String, value: Double) {
     if (value != 0.0){
-        Row(modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 2.dp), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(text = label, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             Text(text = "${String.format(Locale.US, "%.2f", value)} g", style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
         }

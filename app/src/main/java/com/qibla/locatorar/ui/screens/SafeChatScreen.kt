@@ -49,39 +49,47 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-private val DEFAULT_GREETING = ChatMessage(
-    "Assalamu alaikum. I am your Islamic learning assistant. How can I help you today?",
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
+import com.google.ai.client.generativeai.Chat
+import com.qibla.locatorar.R
+
+private fun getDefaultGreeting(context: android.content.Context) = ChatMessage(
+    context.getString(R.string.safe_chat_default_greeting),
     false
 )
 
 class ChatViewModel : ViewModel() {
-    private val generativeModel = GenerativeModel(
-        modelName = "gemini-3.5-flash-lite",
-        apiKey = AppConstants.GEMINI_API_KEY,
-        systemInstruction = content {
-            text("You are a helpful and respectful Islamic assistant. " +
-                    "Provide general information about Islamic learning, duas, prayer basics, and Quranic themes. " +
-                    "Always advise the user to consult a qualified scholar for specific fatwas or complex rulings. " +
-                    "Keep answers concise and accurate. Do not engage in unsafe or non-Islamic romantic chat.")
-        }
-    )
+    private var generativeModel: GenerativeModel? = null
+    private var chat: Chat? = null
 
-    private val chat = generativeModel.startChat()
-
-    // Load any previously saved conversation, falling back to the greeting.
-    private val _messages = MutableStateFlow(
-        PreferenceHelper.getSafeChatMessages().ifEmpty { listOf(DEFAULT_GREETING) }
-    )
+    private val _messages = MutableStateFlow<List<ChatMessage>>(emptyList())
     val messages = _messages.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
 
+    fun init(context: android.content.Context) {
+        if (generativeModel != null) return
+
+        generativeModel = GenerativeModel(
+            modelName = "gemini-1.5-flash-lite",
+            apiKey = AppConstants.GEMINI_API_KEY,
+            systemInstruction = content {
+                text(context.getString(R.string.safe_chat_system_instruction))
+            }
+        )
+        chat = generativeModel?.startChat()
+        
+        val saved = PreferenceHelper.getSafeChatMessages()
+        _messages.value = saved.ifEmpty { listOf(getDefaultGreeting(context)) }
+    }
+
     private fun persist() {
         PreferenceHelper.saveSafeChatMessages(_messages.value)
     }
 
-    fun sendMessage(text: String) {
+    fun sendMessage(text: String, context: android.content.Context) {
         if (text.isBlank()) return
 
         val userMessage = ChatMessage(text, true)
@@ -91,8 +99,8 @@ class ChatViewModel : ViewModel() {
 
         viewModelScope.launch {
             try {
-                val response = chat.sendMessage(text)
-                val aiMessage = ChatMessage(response.text ?: "I couldn't generate a response.", false)
+                val response = chat?.sendMessage(text)
+                val aiMessage = ChatMessage(response?.text ?: context.getString(R.string.safe_chat_error_no_response), false)
                 _messages.value = _messages.value + aiMessage
             } catch (e: Exception) {
                 _messages.value = _messages.value + ChatMessage(e.toString(), false)
@@ -103,14 +111,20 @@ class ChatViewModel : ViewModel() {
         }
     }
 
-    fun clearChat() {
-        _messages.value = listOf(DEFAULT_GREETING)
+    fun clearChat(context: android.content.Context) {
+        _messages.value = listOf(getDefaultGreeting(context))
         PreferenceHelper.clearSafeChatMessages()
     }
 }
 
 @Composable
 fun SafeChatScreen(viewModel: ChatViewModel = viewModel()) {
+    val context = LocalContext.current
+    
+    LaunchedEffect(Unit) {
+        viewModel.init(context)
+    }
+
     val messages by viewModel.messages.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     var input by remember { mutableStateOf("") }
@@ -135,15 +149,15 @@ fun SafeChatScreen(viewModel: ChatViewModel = viewModel()) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Islamic Assistant", style = MaterialTheme.typography.titleMedium)
-            TextButton(onClick = { viewModel.clearChat() }) {
+            Text(stringResource(R.string.safe_chat_title), style = MaterialTheme.typography.titleMedium)
+            TextButton(onClick = { viewModel.clearChat(context) }) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Clear chat",
+                    contentDescription = stringResource(R.string.safe_chat_clear_chat),
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(Modifier.width(4.dp))
-                Text("Clear chat")
+                Text(stringResource(R.string.safe_chat_clear_chat))
             }
         }
 
@@ -163,7 +177,7 @@ fun SafeChatScreen(viewModel: ChatViewModel = viewModel()) {
                     ) {
                         CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
                         Spacer(Modifier.width(8.dp))
-                        Text("AI is thinking...", style = MaterialTheme.typography.labelSmall)
+                        Text(stringResource(R.string.safe_chat_ai_thinking), style = MaterialTheme.typography.labelSmall)
                     }
                 }
             }
@@ -173,7 +187,7 @@ fun SafeChatScreen(viewModel: ChatViewModel = viewModel()) {
                 value = input,
                 onValueChange = { input = it },
                 modifier = Modifier.weight(1f),
-                placeholder = { Text("Ask an Islamic question") },
+                placeholder = { Text(stringResource(R.string.safe_chat_placeholder)) },
                 enabled = !isLoading,
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Sentences,
@@ -181,7 +195,7 @@ fun SafeChatScreen(viewModel: ChatViewModel = viewModel()) {
                 ),
                 keyboardActions = KeyboardActions(onSend = {
                     if (input.isNotBlank()) {
-                        viewModel.sendMessage(input.trim())
+                        viewModel.sendMessage(input.trim(), context)
                         input = ""
                     }
                 })
@@ -190,7 +204,7 @@ fun SafeChatScreen(viewModel: ChatViewModel = viewModel()) {
             IconButton(
                 onClick = {
                     if (input.isNotBlank()) {
-                        viewModel.sendMessage(input.trim())
+                        viewModel.sendMessage(input.trim(), context)
                         input = ""
                     }
                 },
@@ -198,7 +212,7 @@ fun SafeChatScreen(viewModel: ChatViewModel = viewModel()) {
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.Send,
-                    contentDescription = "Send message"
+                    contentDescription = stringResource(R.string.safe_chat_send_description)
                 )
             }
         }

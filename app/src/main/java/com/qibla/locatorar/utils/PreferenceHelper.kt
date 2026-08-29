@@ -109,8 +109,8 @@ object PreferenceHelper {
     fun getGoldUnit(): String = getString(KEY_GOLD_UNIT) ?: "1 Gram"
     fun setGoldUnit(value: String) = putString(KEY_GOLD_UNIT, value)
 
-    fun getGoldCurrency(): String = getString(KEY_GOLD_CURRENCY) ?: "PKR"
-    fun setGoldCurrency(value: String) = putString(KEY_GOLD_CURRENCY, value)
+    fun getCurrency(): String = getString(KEY_GOLD_CURRENCY) ?: "PKR"
+    fun setCurrency(value: String) = putString(KEY_GOLD_CURRENCY, value)
 
     // ---- Safe Chat ----
 

@@ -1,24 +1,43 @@
 # Gradle
 .gradle/
 build/
+/*/build/
 
 # IDE
 .idea/
+*.iml
 .kotlin/
+.navigation/
 
 # OS
 .DS_Store
+Thumbs.db
 
-*.iml
-.gradle
-/local.properties
-/build
-/captures
+# Local configuration
+local.properties
+
+# Android Studio Captures
+captures/
+
+# External native build output
 .externalNativeBuild
 .cxx
+
+# Signing files
+*.jks
+*.keystore
+*.pem
+
+# Log Files
+*.log
+*.hprof
+
+# VS Code
+.vscode/
+
+# Build artifacts
 app/release/
 /ar/build/
 **/build/
 **/.idea/
 /devfile.yaml
-*.pem

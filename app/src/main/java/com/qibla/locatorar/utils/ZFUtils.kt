@@ -1,33 +1,14 @@
 package com.qibla.locatorar.utils
 
 import android.content.Context
-import android.webkit.WebView
-import android.webkit.WebViewClient
-import org.w3c.dom.Document
-import java.io.File
-import java.io.InputStream
 import java.util.*
-import javax.xml.parsers.DocumentBuilder
-import javax.xml.parsers.DocumentBuilderFactory
 
-import android.annotation.SuppressLint
-import android.os.Bundle
-import android.os.CancellationSignal
-import android.os.ParcelFileDescriptor
-import android.print.PageRange
-import android.print.PrintAttributes
-import android.print.PrintDocumentAdapter
-import android.print.PrintDocumentInfo
-import android.print.PrintManager
 import com.qibla.locatorar.R
 import com.qibla.locatorar.data.models.zakat.DropDownItem
 import com.qibla.locatorar.data.models.zakat.ZakatCalculationModel
 import com.qibla.locatorar.data.models.zakat.ZakatCommonCalculationModel
 import com.qibla.locatorar.data.models.zakat.ZakatTypeEnum
 import com.qibla.locatorar.data.models.zakat.ZakatValueModel
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.io.IOException
 import kotlin.collections.ArrayList
 
 
@@ -112,7 +93,7 @@ object ZFUtils {
         )
         popupModel.totalZakatLabel = context.getString(R.string.total_zakat_al_fitr_value)
         popupModel.totalZakatValue = model.zakatValue
-        popupModel.totalZakatSubLabel = context.getString(R.string.aed)
+        popupModel.totalZakatSubLabel = PreferenceHelper.getCurrency()
         popupModel.date = model.date
         popupModel.calenderType = model.calenderType
         model.popupModel = popupModel
@@ -176,19 +157,19 @@ object ZFUtils {
             ZakatValueModel(
                 context.getString(R.string.nesab_value),
                 model.nesabValue,
-                context.getString(R.string.aed)
+                PreferenceHelper.getCurrency()
             )
         )
         popupModel.zakatList.add(
             ZakatValueModel(
                 context.getString(R.string.the_total_amount),
                 model.totalAmount,
-                context.getString(R.string.aed)
+                PreferenceHelper.getCurrency()
             )
         )
         popupModel.totalZakatLabel = context.getString(R.string.zakat_value)
         popupModel.totalZakatValue = model.zakatValue
-        popupModel.totalZakatSubLabel = context.getString(R.string.aed)
+        popupModel.totalZakatSubLabel = PreferenceHelper.getCurrency()
         popupModel.date = model.date
         popupModel.calenderType = model.calenderType
         model.popupModel = popupModel
@@ -245,7 +226,7 @@ object ZFUtils {
         )
         popupModel.totalZakatLabel = context.getString(R.string.zakat_value)
         popupModel.totalZakatValue = model.zakatValue
-        popupModel.totalZakatSubLabel = context.getString(R.string.aed)
+        popupModel.totalZakatSubLabel = PreferenceHelper.getCurrency()
         popupModel.date = model.date
         popupModel.calenderType = model.calenderType
         model.popupModel = popupModel
@@ -305,7 +286,7 @@ object ZFUtils {
         )
         popupModel.totalZakatLabel = context.getString(R.string.zakat_value)
         popupModel.totalZakatValue = model.zakatValue
-        popupModel.totalZakatSubLabel = context.getString(R.string.aed)
+        popupModel.totalZakatSubLabel = PreferenceHelper.getCurrency()
         popupModel.date = model.date
         popupModel.calenderType = model.calenderType
         model.popupModel = popupModel
@@ -410,7 +391,7 @@ object ZFUtils {
 //        )
 //        popupModel.totalZakatLabel = context.getString(R.string.zakat_value)
 //        popupModel.totalZakatValue = model.zakatValue
-//        popupModel.totalZakatSubLabel = context.getString(R.string.aed)
+//        popupModel.totalZakatSubLabel = PreferenceHelper.getCurrency()
 //        popupModel.date = model.date
 //        popupModel.calenderType = model.calenderType
 //        model.popupModel = popupModel
@@ -456,7 +437,7 @@ object ZFUtils {
 //            ZakatValueModel(
 //                context.getString(R.string.price_of_one_kg_dates),
 //                ZakatBusinessRules.datesPerKGPrice,
-//                context.getString(R.string.aed)
+//                PreferenceHelper.getCurrency()
 //            )
 //        )
 //        popupModel.zakatList.add(
@@ -469,7 +450,7 @@ object ZFUtils {
 //        popupModel.totalZakatLabel = context.getString(R.string.zakat_amount)
 //        popupModel.totalZakatValue = model.zakatValue
 //        popupModel.totalZakatKGs = model.zakatValueInKGs.toInt()
-//        popupModel.totalZakatSubLabel = context.getString(R.string.aed)
+//        popupModel.totalZakatSubLabel = PreferenceHelper.getCurrency()
 //        popupModel.date = model.date
 ////        popupModel.calenderType = model.calenderType
 //        model.popupModel = popupModel
@@ -1207,7 +1188,7 @@ object ZFUtils {
 //        list.add(
 //            DropDownItem(
 //                CurrencyEnum.AED.toInt().toString(),
-//                context.getString(R.string.aed)
+//                PreferenceHelper.getCurrency()
 //            )
 //        )
 //        list.add(
@@ -1277,7 +1258,7 @@ object ZFUtils {
         list.add(
             DropDownItem(
                 companyManagementUAEID,
-                context.getString(R.string.aed)
+                PreferenceHelper.getCurrency()
             )
         )
         list.add(
@@ -1294,7 +1275,7 @@ object ZFUtils {
         list.add(
             DropDownItem(
                 companyManagementUAEID,
-                context.getString(R.string.uae)
+                PreferenceHelper.getCurrency()
             )
         )
         list.add(

@@ -24,8 +24,10 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.qibla.locatorar.R
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -60,6 +62,11 @@ fun QiblaCompassWheel(
         animationSpec = spring(stiffness = 450f, dampingRatio = 0.85f),
         label = "CompassRotation"
     )
+
+    val nStr = stringResource(R.string.cardinal_north)
+    val eStr = stringResource(R.string.cardinal_east)
+    val sStr = stringResource(R.string.cardinal_south)
+    val wStr = stringResource(R.string.cardinal_west)
 
     Box(modifier = modifier) {
         Canvas(modifier = Modifier.fillMaxSize()) {
@@ -123,10 +130,10 @@ fun QiblaCompassWheel(
             // 2. Rotating Wheel Elements
             rotate(animatedRotation, pivot = center) {
                 val cardinalPoints = mapOf(
-                    0 to "N",
-                    90 to "E",
-                    180 to "S",
-                    270 to "W"
+                    0 to nStr,
+                    90 to eStr,
+                    180 to sStr,
+                    270 to wStr
                 )
 
                 // Subdivided Precision Ticks

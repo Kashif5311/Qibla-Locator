@@ -1,5 +1,7 @@
 package com.qibla.locatorar.ui.components
 
+import androidx.compose.ui.res.stringResource
+import com.qibla.locatorar.R
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -124,7 +126,7 @@ fun CalibrationDialog(accuracy: Int, onDismiss: () -> Unit) {
             onDismissRequest = onDismiss,
             title = {
                 Text(
-                    "Calibrate Your Compass",
+                    stringResource(R.string.calibrate_compass),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
@@ -136,7 +138,7 @@ fun CalibrationDialog(accuracy: Int, onDismiss: () -> Unit) {
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        "Tilt and move your phone 3 times like this:",
+                        stringResource(R.string.calibration_instruction),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
@@ -146,9 +148,9 @@ fun CalibrationDialog(accuracy: Int, onDismiss: () -> Unit) {
                     Spacer(modifier = Modifier.height(24.dp))
                     
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("Compass accuracy: ", style = MaterialTheme.typography.bodySmall)
+                        Text(stringResource(R.string.compass_accuracy), style = MaterialTheme.typography.bodySmall)
                         Text(
-                            if (accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE) "unreliable" else "low",
+                            if (accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE) stringResource(R.string.accuracy_unreliable) else stringResource(R.string.accuracy_low),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.error,
                             fontWeight = FontWeight.Bold
@@ -158,7 +160,7 @@ fun CalibrationDialog(accuracy: Int, onDismiss: () -> Unit) {
             },
             confirmButton = {
                 TextButton(onClick = onDismiss) {
-                    Text("DONE")
+                    Text(stringResource(R.string.done_all_caps))
                 }
             }
         )

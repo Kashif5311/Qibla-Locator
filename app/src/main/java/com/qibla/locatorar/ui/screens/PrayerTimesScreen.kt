@@ -44,6 +44,9 @@ import com.qibla.locatorar.utils.getSavedLocation
 import com.qibla.locatorar.utils.hasLocationPermission
 import kotlinx.coroutines.launch
 
+import androidx.compose.ui.res.stringResource
+import com.qibla.locatorar.R
+
 @Composable
 fun PrayerTimesScreen() {
     val context = LocalContext.current
@@ -57,7 +60,7 @@ fun PrayerTimesScreen() {
         if (permissions.values.any { it }) {
             scope.launch { loadPrayerTimes(context, repository) { state = it } }
         } else {
-            state = state.copy(message = "Location permission is needed for auto prayer times.")
+            state = state.copy(message = context.getString(R.string.location_permission_denied_msg))
         }
     }
 
@@ -67,8 +70,8 @@ fun PrayerTimesScreen() {
     if (showLocationPermissionDialog && !hasPermission) {
         AlertDialog(
             onDismissRequest = { showLocationPermissionDialog = false },
-            title = { Text("Location Permission Required") },
-            text = { Text("Location permission is required to calculate accurate prayer times based on your current location.") },
+            title = { Text(stringResource(R.string.location_permission_required)) },
+            text = { Text(stringResource(R.string.location_permission_rationale)) },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -80,11 +83,11 @@ fun PrayerTimesScreen() {
                             )
                         )
                     }
-                ) { Text("Allow") }
+                ) { Text(stringResource(R.string.allow)) }
             },
             dismissButton = {
                 TextButton(onClick = { showLocationPermissionDialog = false }) {
-                    Text("Not Now")
+                    Text(stringResource(R.string.not_now))
                 }
             }
         )
@@ -104,7 +107,7 @@ fun PrayerTimesScreen() {
         state = state.copy(
             cached = repository.readCached(),
             message = if (repository.readCached() == null && savedLocation == null) 
-                "Request location to load today's times." else ""
+                context.getString(R.string.request_location_msg) else ""
         )
     }
 
@@ -132,7 +135,7 @@ fun PrayerTimesScreen() {
                 PrayerTimeRow(name, time, isNext = index == nextPrayerIndex)
             }
         } ?: item {
-            EmptyPanel("No prayer times available. Please check your location and internet.")
+            EmptyPanel(stringResource(R.string.no_prayer_times_available))
         }
     }
 
@@ -151,7 +154,7 @@ fun PrayerTimesScreen() {
             )
             Spacer(Modifier.width(12.dp))
             Text(
-                text = "Updating prayer times...",
+                text = stringResource(R.string.updating_prayer_times),
                 style = MaterialTheme.typography.bodyMedium
             )
         }
@@ -167,7 +170,7 @@ private suspend fun loadPrayerTimes(
         PrayerUiState(
             cached = repository.readCached(),
             isLoading = true,
-            message = "Getting location..."
+            message = context.getString(R.string.getting_location)
         )
     )
     val location = context.currentLocation()
@@ -176,7 +179,7 @@ private suspend fun loadPrayerTimes(
             PrayerUiState(
                 cached = repository.readCached(),
                 isLoading = false,
-                message = "Unable to read location. Check GPS and try again."
+                message = context.getString(R.string.unable_read_location)
             )
         )
         return
@@ -185,7 +188,7 @@ private suspend fun loadPrayerTimes(
         PrayerUiState(
             cached = repository.readCached(),
             isLoading = true,
-            message = "Checking today's prayer cache...",
+            message = context.getString(R.string.checking_cache),
             locationText = "Lat ${location.latitude.formatCoord()}, Lon ${location.longitude.formatCoord()}"
         )
     )
@@ -205,7 +208,7 @@ private suspend fun loadPrayerTimes(
             PrayerUiState(
                 cached = repository.readCached(),
                 isLoading = false,
-                message = "Saved data shown. Refresh failed: ${error.message.orEmpty()}",
+                message = context.getString(R.string.refresh_failed_msg, error.message.orEmpty()),
                 locationText = "Lat ${location.latitude.formatCoord()}, Lon ${location.longitude.formatCoord()}"
             )
         )

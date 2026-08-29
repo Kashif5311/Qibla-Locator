@@ -28,6 +28,9 @@ import java.time.format.TextStyle
 import java.time.temporal.ChronoField
 import java.util.Locale
 
+import androidx.compose.ui.res.stringResource
+import com.qibla.locatorar.R
+
 @Composable
 fun DateCard() {
     val today = LocalDate.now()
@@ -48,20 +51,21 @@ fun DateCard() {
     val hijriMonth = hijriDate.get(ChronoField.MONTH_OF_YEAR)
     val hijriYear = hijriDate.get(ChronoField.YEAR_OF_ERA)
 
-    val hijriMonthName = listOf(
-        "Muharram",
-        "Safar",
-        "Rabi al-Awwal",
-        "Rabi al-Thani",
-        "Jumada al-Awwal",
-        "Jumada al-Thani",
-        "Rajab",
-        "Sha'ban",
-        "Ramadan",
-        "Shawwal",
-        "Dhu al-Qi'dah",
-        "Dhu al-Hijjah"
-    ).getOrNull(hijriMonth - 1) ?: ""
+    val hijriMonthName = when (hijriMonth) {
+        1 -> stringResource(R.string.hijri_month_1)
+        2 -> stringResource(R.string.hijri_month_2)
+        3 -> stringResource(R.string.hijri_month_3)
+        4 -> stringResource(R.string.hijri_month_4)
+        5 -> stringResource(R.string.hijri_month_5)
+        6 -> stringResource(R.string.hijri_month_6)
+        7 -> stringResource(R.string.hijri_month_7)
+        8 -> stringResource(R.string.hijri_month_8)
+        9 -> stringResource(R.string.hijri_month_9)
+        10 -> stringResource(R.string.hijri_month_10)
+        11 -> stringResource(R.string.hijri_month_11)
+        12 -> stringResource(R.string.hijri_month_12)
+        else -> ""
+    }
 
     val timezone = ZoneId.systemDefault().id
 
@@ -87,7 +91,7 @@ fun DateCard() {
             )
 
             Text(
-                "Timezone: $timezone",
+                stringResource(R.string.timezone_label, timezone),
                 style = MaterialTheme.typography.bodySmall
             )
         }

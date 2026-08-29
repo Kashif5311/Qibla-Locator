@@ -36,6 +36,9 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.ShoppingCart
 
+import androidx.compose.ui.res.stringResource
+import com.qibla.locatorar.R
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QiblaLocatorApp() {
@@ -50,9 +53,9 @@ fun QiblaLocatorApp() {
                 CenterAlignedTopAppBar(
                     title = {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("Qibla Finder", fontWeight = FontWeight.Bold)
+                            Text(stringResource(R.string.qibla_finder_title), fontWeight = FontWeight.Bold)
                             Text(
-                                "Prayer, Qibla, Zakat Calculation",
+                                stringResource(R.string.app_subtitle),
                                 style = MaterialTheme.typography.labelSmall
                             )
                         }
@@ -63,7 +66,10 @@ fun QiblaLocatorApp() {
                             modifier = Modifier.padding(end = 8.dp)
                         ) {
                             Switch(checked = darkMode, onCheckedChange = { darkMode = it })
-                            Text(if (darkMode) "Dark" else "Light", style = MaterialTheme.typography.labelSmall)
+                            Text(
+                                if (darkMode) stringResource(R.string.dark_mode) else stringResource(R.string.light_mode),
+                                style = MaterialTheme.typography.labelSmall
+                            )
                         }
                     }
                 )
@@ -77,11 +83,17 @@ fun QiblaLocatorApp() {
                             AppTab.Zakat -> Icons.Default.ShoppingCart
                             AppTab.Chat -> Icons.Default.Info
                         }
+                        val label = when (tab) {
+                            AppTab.Prayer -> stringResource(R.string.tab_prayer)
+                            AppTab.Qibla -> stringResource(R.string.tab_qibla)
+                            AppTab.Zakat -> stringResource(R.string.tab_zakat)
+                            AppTab.Chat -> stringResource(R.string.tab_chat)
+                        }
                         NavigationBarItem(
                             selected = selectedTab == tab,
                             onClick = { selectedTab = tab },
                             icon = { NavMark(icon, selectedTab == tab) },
-                            label = { Text(tab.title) }
+                            label = { Text(label) }
                         )
                     }
                 }
